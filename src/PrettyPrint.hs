@@ -2,25 +2,20 @@
 
 module PrettyPrint where
 
-import           Data.Decimal (roundTo)
-import           Data.Tree
+import           Data.Decimal                (roundTo)
+import           Data.Generics.Fixplate.Base (Ann (Ann))
 import           Text.Printf
 
 import           Project
 import           Reporting
 
-asTree :: (g -> String) -> (a -> String) -> Project g a -> Tree String
-asTree prettyGroup prettyValue project =
-  case project of
-    Project name x -> Node (printf "%s: %s" name (prettyValue x)) []
-    ProjectGroup name x projects ->
-      Node
-        (printf "%s: %s" name (prettyGroup x))
-        (map (asTree prettyGroup prettyValue) projects)
-
-prettyProject :: (g -> String) -> (a -> String) -> Project g a -> String
-prettyProject prettyGroup prettyValue =
-  drawTree . asTree prettyGroup prettyValue
+prettyResult :: Ann ProjectF Report a -> String
+prettyResult (Ann report project') =
+  case project' of
+    Project (ProjectId p) name ->
+      printf "%s (%d): %s" name p (prettyReport report)
+    ProjectGroup name _ ->
+      printf "%s: %s" name (prettyReport report)
 
 prettyMoney :: Money -> String
 prettyMoney (Money d) = sign ++ show (roundTo 2 d)

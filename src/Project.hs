@@ -4,8 +4,9 @@
 
 module Project where
 
-import           Data.Decimal (Decimal)
-import           Data.Text    (Text)
+import           Data.Decimal                (Decimal)
+import           Data.Generics.Fixplate.Base (Mu (Fix))
+import           Data.Text                   (Text)
 
 newtype Money = Money
   { unMoney :: Decimal
@@ -15,13 +16,20 @@ newtype ProjectId = ProjectId
   { unProjectId :: Int
   } deriving (Show, Eq, Num)
 
-data Project g a
-  = Project Text
-            a
+data ProjectF f
+  = Project ProjectId
+            Text
   | ProjectGroup Text
-                 g
-                 [Project g a]
+                 [f]
   deriving (Show, Eq, Functor, Foldable, Traversable)
+
+type Project = Mu ProjectF
+
+project :: ProjectId -> Text -> Project
+project p = Fix . Project p
+
+projectGroup :: Text -> [Project] -> Project
+projectGroup name = Fix . ProjectGroup name
 
 data Budget = Budget
   { budgetIncome      :: Money

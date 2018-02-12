@@ -6,5 +6,5 @@ will find each episode's result among these branches:
 
 1. `data-structures`
 1. `foldable-traversable`
-1. `writert` (you are here)
-1. `fixplate`
+1. `writert`
+1. `fixplate` (you are here)
