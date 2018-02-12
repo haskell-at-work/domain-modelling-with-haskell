@@ -4,21 +4,23 @@
 
 module Project where
 
-import           Data.Text (Text)
+import           Data.Decimal (Decimal)
+import           Data.Text    (Text)
 
 newtype Money = Money
-  { unMoney :: Double
+  { unMoney :: Decimal
   } deriving (Show, Eq, Num)
 
 newtype ProjectId = ProjectId
   { unProjectId :: Int
   } deriving (Show, Eq, Num)
 
-data Project a
+data Project g a
   = Project Text
             a
   | ProjectGroup Text
-                 [Project a]
+                 g
+                 [Project g a]
   deriving (Show, Eq, Functor, Foldable, Traversable)
 
 data Budget = Budget

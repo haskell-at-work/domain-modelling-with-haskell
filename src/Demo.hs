@@ -9,11 +9,11 @@ import           PrettyPrint
 import           Project
 import           Reporting
 
-someProject :: Project ProjectId
-someProject = ProjectGroup "Sweden" [stockholm, göteborg, malmö]
+someProject :: Project () ProjectId
+someProject = ProjectGroup "Sweden" () [stockholm, göteborg, malmö]
   where
     stockholm = Project "Stockholm" 1
     göteborg = Project "Gothenburg" 2
-    malmö = ProjectGroup "Malmö" [city, limhamn]
+    malmö = ProjectGroup "Malmö" () [city, limhamn]
     city = Project "Malmö City" 3
     limhamn = Project "Limhamn" 4

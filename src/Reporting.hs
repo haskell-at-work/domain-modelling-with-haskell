@@ -1,15 +1,18 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Reporting where
 
-import           Data.Foldable (fold)
-import           Data.Monoid   (getSum)
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Writer (listen, runWriterT, tell)
+import Data.Monoid (getSum)
 
-import qualified Database      as DB
-import           Project
+import qualified Database as DB
+import Project
 
 data Report = Report
   { budgetProfit :: Money
-  , netProfit    :: Money
-  , difference   :: Money
+  , netProfit :: Money
+  , difference :: Money
   } deriving (Show, Eq)
 
 instance Monoid Report where
@@ -27,12 +30,17 @@ calculateReport budget transactions =
   where
     budgetProfit' = budgetIncome budget - budgetExpenditure budget
     netProfit' = getSum (foldMap asProfit transactions)
-    asProfit (Sale m)     = pure m
+    asProfit (Sale m) = pure m
     asProfit (Purchase m) = pure (negate m)
 
-calculateProjectReports :: Project ProjectId -> IO (Project Report)
-calculateProjectReports =
-  traverse (\p -> calculateReport <$> DB.getBudget p <*> DB.getTransactions p)
-
-accumulateProjectReport :: Project Report -> Report
-accumulateProjectReport = fold
+calculateProjectReports :: Project g ProjectId -> IO (Project Report Report)
+calculateProjectReports project = fst <$> runWriterT (calc project)
+  where
+    calc (Project name p) = do
+      report <-
+        liftIO (calculateReport <$> DB.getBudget p <*> DB.getTransactions p)
+      tell report
+      pure (Project name report)
+    calc (ProjectGroup name _ projects) = do
+      (projects', report) <- listen (mapM calc projects)
+      pure (ProjectGroup name report projects')
