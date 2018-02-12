@@ -1,0 +1,30 @@
+name:           domain-modelling
+version:        0.1.0.0
+description:    Please see the README on Github at <https://github.com/haskell-at-work/domain-modelling-with-haskell#readme>
+author:         Oskar Wickström
+maintainer:     oskar.wickstrom@gmail.com
+copyright:      Oskar Wickström
+license:        MPL-2.0
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    README.md
+
+library
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , random
+    , text
+  exposed-modules:
+      Database
+      Demo
+      PrettyPrint
+      Project
+      Reporting
+  default-language: Haskell2010
