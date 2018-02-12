@@ -8,3 +8,8 @@ will find each episode's result among these branches:
 1. `foldable-traversable`
 1. `writert`
 1. `fixplate`
+
+## License
+
+All code is licensed under [Mozilla Public License
+Version 2.0](https://www.mozilla.org/en-US/MPL/2.0/).
